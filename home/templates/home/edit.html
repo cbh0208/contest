@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>书籍修改页面</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+</head>
+<body>  
+    <div class="container">
+        <div class="row" style="margin-top: 150px;">
+            <div class="col-md-4 col-md-offset-4">
+                <form class="form-horizontal" action="{% url 'updateBook' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="id" value="{{obj.id}}">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">书籍名称</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="name" value="{{obj.name}}" class="form-control" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">作者</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="author" value="{{obj.author}}" class="form-control" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">价格</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="price" value="{{obj.price}}" class="form-control" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">出版社</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="publisher" value="{{obj.publisher}}" class="form-control" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">出版时间</label>
+                        <div class="col-sm-9">
+                            <input type="date" name="pub_date" value="{{obj.pub_date|date:'Y-m-d'}}"  class="form-control" >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">简介</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" name="abstract" rows="3">{{obj.abstract}}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">书本封面</label>
+                        <div class="col-sm-9">
+                            <input type="file" id="img" name="img_url" >
+                            <div id="im" ><img src="/{{obj.img_url}}" alt=""></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-6  col-sm-3">
+                            <button type="submit" class="btn btn-success">更新</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        document.getElementById("img").onchange=function(){
+            var file=this.files[0];
+            var reader=new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload=function(e){
+                var result=document.getElementById("im")
+                result.innerHTML='<img src="'+this.result+'" alt="" style="max-width: 200px;">'
+
+            }
+
+        }
+
+    </script>
+</body>
+</html>

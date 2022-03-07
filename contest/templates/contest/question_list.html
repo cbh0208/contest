@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>{{ name }}</h1>
+    <table border="1px" >
+        <thead>
+            <tr>
+                <th>题干</th>
+                <th>类型</th>
+                <th>选项A</th>
+                <th>选项B</th>
+                <th>选项C</th>
+                <th>选项D</th>
+                <th>答案</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in data %}
+            <tr>
+                <th>{{ i.question_message }}</th>
+                <th>
+                    {% if i.type == "SC" %}
+                        单选题
+                    {% elif i.type == 'MC' %}
+                        多选题
+                    {% elif i.type == 'JQ' %}
+                        判断题
+                    {% elif i.type == 'EQ' %}
+                        简答题
+                    {% endif %}
+                </th>
+                <th>{{ i.option_A}}</th>
+                <th>{{ i.option_B}}</th>
+                <th>{{ i.option_C}}</th>
+                <th>{{ i.option_D}}</th>
+                <th>{{ i.answer}}</th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1><a href="{% url 'question_add' id %}">添加</a></h1>
+    <h1><a href="{% url 'question_add_batch' id%}">批量添加</a></h1>
+</body>
+</html>

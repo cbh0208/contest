@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加题目</title>
+</head>
+<body>
+    <form action="{% url 'question_add' id %}" method="post">
+        {% csrf_token %}
+
+        <div>
+            <label for="">题干:</label>
+            <div><input type="text" name='question_message'></div>
+        </div>
+        <div>
+            <label for="">类型: </label>
+            <div>
+                <select name="type" id="type">
+                    <option value="SC">单选题</option>
+                    <option value="MC">多选题</option>
+                    <option value="JQ">判断题</option>
+                    <option value="EQ">简答题</option>
+                </select>
+            </div>
+        </div>
+        <div>
+            <label for="">选项A:</label>
+            <div><input type="text" name="option_A"></div>
+        </div>
+        <div>
+            <label for="">选项B:</label>
+            <div><input type="text" name="option_B"></div>
+        </div>
+        <div>
+            <label for="">选项C:</label>
+            <div><input type="text" name="option_C"></div>
+        </div>
+        <div>
+            <label for="">选项D:</label>
+            <div><input type="text" name="option_D"></div>
+        </div>
+        <div>
+            <label for="">答案: </label>
+            <div><input type="text" name="answer"></div>
+        </div>
+
+         
+        
+        
+        
+        
+        
+        
+        <button type="submit">提交</button>
+    </form>
+</body>
+</html>

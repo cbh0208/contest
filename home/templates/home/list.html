@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>书籍列表页面</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <script src="/static/js/jquery.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>封面</th>
+                        <th>书籍名称</th>
+                        <th>作者</th>
+                        <th>单价</th>
+                        <th>出版社</th>
+                        <th>出版时间</th>
+                        <th>简介</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in data %}
+                    <tr>
+                        <th>{{i.id}}</th>
+                        <th><img src="/{{i.img_url}}" style="width: 100px;" alt=""></th>
+                        <th>{{i.name}}</th>
+                        <th>{{i.author}}</th>
+                        <th>{{i.price}}</th>
+                        <th>{{i.publisher}}</th>
+                        <th>{{i.pub_date|date:'Y-m-d'}}</th>
+                        <th>{{i.abstract}}</th>
+                        <th>
+                            <a href="{% url 'delBook' i.id %}">删除</a>
+                            <a href="{% url 'editBook' %}?id={{i.id}}">修改</a>
+                        </th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="data">
+        <p>
+            <span id="prev">上一月</span>
+            <span id="year">2021</span>
+            <span id="next">下一月</span>
+        </p>
+        <h5 id="month">九月</h5>
+        <ul id="title">  
+            <li>日</li>        
+            <li>一</li>
+            <li>二</li>
+            <li>三</li>
+            <li>四</li>
+            <li>五</li>
+            <li>六</li>
+            
+        </ul>
+        <ul id="date">
+
+        </ul>
+    </div>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+        #data {
+            width: 280px;
+            border: 1px solid #000000;
+            margin: 20px auto;
+        }
+        #data>p {
+            display: flex;
+        }
+        #data>h5 {
+            text-align: center;
+        }
+        #data>p>span {
+            padding: 0 10px;
+        }
+        #prev,#next {
+            cursor: pointer;
+        }
+        #year {
+            flex: 1;
+            text-align: center;
+        }
+        #title {
+            overflow: hidden;
+            list-style: none;
+            background-color: #ccc;
+        }
+        #title>li {
+            float: left;
+            width: 40px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+        }
+        #date {
+            overflow: hidden;
+            list-style: none;
+        }
+        #date>li {
+            float: left;
+            width: 34px;
+            height: 34px;
+            margin: 1px 1px;
+            border: 2px solid rgba(0, 0,0,0);
+            line-height: 34px;
+            text-align: center;
+            cursor: pointer;
+        }
+        #date>.hover:hover {
+            border: 2px solid red;
+        }
+        .active {
+            color: red;
+        }
+    </style>
+
+    <script>
+
+        var date=new Date()
+        function  dateT(){
+            var year=date.getFullYear()                 // 年
+            var month=date.getMonth()                   // 月
+            var day=date.getDate()                      // 日
+            var days=new Date(year,month+1,0).getDate()  // 这个月有多少天
+            var week=new Date(year,month,1).getDay()    // 这个月第一天周几
+            document.getElementById('year').innerHTML=year
+            arr=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月']
+            document.getElementById('month').innerHTML=arr[month]
+            var list=''
+            for(let i=0;i<week;i++)
+            {
+                list+='<li></li>'
+            }
+            for(let i=1;i<=days;i++)
+            {   
+                if(i==day)
+                {
+                    list+='<li class="active hover">'+i+'</li>'
+                }
+                else
+                {
+                    list+='<li class="hover">'+i+'</li>'
+                }
+                
+            }
+            document.getElementById('date').innerHTML=list
+        }
+        dateT()
+        document.getElementById('prev').onclick=function(){
+            date.setMonth(date.getMonth()-1)
+            dateT()
+        }
+        document.getElementById('next').onclick=function(){
+            date.setMonth(date.getMonth()+1)
+            dateT()
+        }
+        console.log(document);
+    </script>
+</body>
+</html>
