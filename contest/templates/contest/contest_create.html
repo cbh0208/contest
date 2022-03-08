@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>竞赛创建</h1>
+    <form action="{% url 'contest_create' %}" method="post">
+        {% csrf_token %}
+        <div>
+            <label for="contest_name">竞赛名称</label>
+            <div><input type="text" name="contest_name" id="contest_name"></div>
+        </div>
+        <div>
+            <label for="contest_type">竞赛方式</label>
+            <div>
+                <select name="contest_type" id="contest_type">
+                    <option value="exam">考试</option>
+                    <option value="notice">通知</option>
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+        <div>
+            <label for="bank_id">题库</label>
+            <div>
+                <select name="bank_id" id="bank_id">
+                    {% for i in banks %}
+                    <option value="{{ i.id }}">{{ i.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div>
+            <label for="question_select_type">出题方式</label>
+            <div>
+                <select name="question_select_type" id="question_select_type">
+                    <option value="random">随机抽题</option>
+                    <option value="manual">手动抽题</option>
+                    <option value="range">范围抽题</option>
+                </select>
+            </div>
+        </div>
+
+
+        <button type="submit">提交</button>
+    </form>
+</body>
+</html>

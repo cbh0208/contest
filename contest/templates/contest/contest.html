@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>竞赛</h1>
+    <div class="paper">
+
+        <form action="{% url 'contest' 1 %}" method="post">
+            {% csrf_token %}
+            {% for i in data %}
+            <div class="question">
+                <h2 class="message">{{ i.question_message }}</h2>
+
+                <div>
+                    <label for="{{ i.id }}_A">A </label>
+                    <div><input type="radio" id="{{ i.id }}_A" name="{{ i.id }}" value="A">{{ i.option_A }}</div>
+                </div>
+                <div>
+                    <label for="{{ i.id }}_B">B </label>
+                    <div><input type="radio" id="{{ i.id }}_B" name="{{ i.id }}" value="B">{{ i.option_B }}</div>
+                </div>
+                <div>
+                    <label for="{{ i.id }}_C">C </label>
+                    <div><input type="radio" id="{{ i.id }}_C" name="{{ i.id }}" value="C">{{ i.option_C }}</div>
+                </div>
+                <div>
+                    <label for="{{ i.id }}_D">D </label>
+                    <div><input type="radio" id="{{ i.id }}_D" name="{{ i.id }}" value="D">{{ i.option_D }}</div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <button type="submit">提交</button>
+        </form>
+    </div>
+
+
+
+    <style>
+
+    </style>
+</body>
+</html>

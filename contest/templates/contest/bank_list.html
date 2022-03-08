@@ -25,9 +25,9 @@
             {% endfor %}
         </tbody>
     </table>
-    <h1>###</h1>
     <form action="{% url 'add_bank' %}" method="post">
         {% csrf_token %}
+        创建题库
         <input type="text" name="name">
         <button type="submit">添加</button>
     </form>
