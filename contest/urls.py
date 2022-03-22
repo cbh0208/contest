@@ -10,6 +10,7 @@ urlpatterns=[
     path('question_add_batch/<int:question_bank_id>/',views.question_add_batch,name='question_add_batch'),
     path('contest_manage',views.contest_manage,name='contest_manage'),
     path('contest_create',views.contest_create,name='contest_create'),
+    path('contest_config',views.contest_config,name='contest_config'),
     path('contest/<int:contest_id>/',views.contest,name='contest')
     
 ]

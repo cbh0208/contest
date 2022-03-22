@@ -11,16 +11,16 @@
     <form action="{% url 'contest_create' %}" method="post">
         {% csrf_token %}
         <div>
-            <label for="contest_name">竞赛名称</label>
-            <div><input type="text" name="contest_name" id="contest_name"></div>
+            <label for="name">竞赛名称</label>
+            <div><input type="text" name="name" id="name"></div>
         </div>
         <div>
-            <label for="contest_type">竞赛方式</label>
+            <label for="type">出题方式</label>
             <div>
-                <select name="contest_type" id="contest_type">
-                    <option value="exam">考试</option>
-                    <option value="notice">通知</option>
-                    <option value=""></option>
+                <select name="type" id="type">
+                    <option value="RA">随机抽题</option>
+                    <option value="FI">固定选题</option>
+                    <option value="SE">范围抽题</option>
                 </select>
             </div>
         </div>
@@ -34,16 +34,7 @@
                 </select>
             </div>
         </div>
-        <div>
-            <label for="question_select_type">出题方式</label>
-            <div>
-                <select name="question_select_type" id="question_select_type">
-                    <option value="random">随机抽题</option>
-                    <option value="manual">手动抽题</option>
-                    <option value="range">范围抽题</option>
-                </select>
-            </div>
-        </div>
+        
 
 
         <button type="submit">提交</button>

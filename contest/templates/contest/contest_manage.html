@@ -8,6 +8,24 @@
 </head>
 <body>
     <h1>竞赛管理</h1>
+    <table border="">
+        <thead>
+            <tr>
+                <td>名称</td>
+                <td>详情</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in data %}
+            <tr>
+                <td><a href="{% url 'contest' i.id %}">{{ i.name }}</a> </td>
+                <td><a href="">#</a></td>
+                <td><a href="">#</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <a href="{% url 'contest_create' %}">创建竞赛</a>
 </body>
 </html>

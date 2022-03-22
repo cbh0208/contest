@@ -7,7 +7,7 @@
     <title>批量添加题目</title>
 </head>
 <body>
-    <form action="{% url 'question_add_batch' id %}" method="post">
+    <form action="{% url 'question_add_batch' id %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="file" accept=".xls,.xlsx" name="excel">
         <button type="submit">提交</button>
