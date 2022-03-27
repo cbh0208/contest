@@ -7,7 +7,7 @@
     <title>注册</title>
 </head>
 <body>
-    <form action="/user/reg" method="post">
+    <form action="{% url 'reg' %}" method="post">
         {% csrf_token %}
         <p>
             用户名: <input type="text" name="username">

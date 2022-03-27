@@ -1,14 +1,20 @@
-from ast import mod
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 
 from . import models
-from . import func
+from . import utils
 
 
 def index(request):
     return render(request,'contest/index.html')
+
+
+def student(request):
+    return render(request,'contest/student.html')
+
+def teacher(request):
+    return render(request,'contest/teacher.html')
 
 ###################################
 ########       题库      ##########
@@ -63,7 +69,7 @@ def question_add_batch(request,question_bank_id):
         file=request.FILES.get("excel",None)
         u=reverse('question_list',args=[question_bank_id])
         if file:
-            a=func.excel_handle(file)
+            a=utils.excel_handle(file)
             b=[]
             for i in a:
                 i.update({'question_bank_id':question_bank_id})
@@ -106,6 +112,7 @@ def contest_create(request):
         return HttpResponse('<script>alert("成功");location.href="'+u+'";</script>')
 
 def contest_config(request):
+    '''竞赛配置'''
     pass
 
 def contest(request,contest_id):

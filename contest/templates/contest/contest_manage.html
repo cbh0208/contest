@@ -8,6 +8,9 @@
 </head>
 <body>
     <h1>竞赛管理</h1>
+    <a href="{% url 'contest_create' %}">创建竞赛</a>
+
+    <h2>未发布的竞赛</h2>
     <table border="">
         <thead>
             <tr>
@@ -26,6 +29,51 @@
             {% endfor %}
         </tbody>
     </table>
-    <a href="{% url 'contest_create' %}">创建竞赛</a>
+
+    <h2>发布的竞赛</h2>
+    <table border="">
+        <thead>
+            <tr>
+                <td>名称</td>
+                <td>详情</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in data %}
+            <tr>
+                <td><a href="{% url 'contest' i.id %}">{{ i.name }}</a> </td>
+                <td><a href="">#</a></td>
+                <td><a href="">#</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>结束的竞赛</h2>
+    <table border="">
+        <thead>
+            <tr>
+                <td>名称</td>
+                <td>详情</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in data %}
+            <tr>
+                <td><a href="{% url 'contest' i.id %}">{{ i.name }}</a> </td>
+                <td><a href="">#</a></td>
+                <td><a href="">#</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+
+
+
+
+    
 </body>
 </html>
