@@ -11,7 +11,9 @@ def index(request):
 
 
 def student(request):
-    return render(request,'contest/student.html')
+    contest=models.Contest.objects.all()
+    grade=models.Grade.objects.all()
+    return render(request,'contest/student.html',{'contest':contest,'grade':grade})
 
 def teacher(request):
     return render(request,'contest/teacher.html')
@@ -122,7 +124,11 @@ def contest(request,contest_id):
         data=question_bank.question_set.all()
         return render(request,'contest/contest.html',{'data':data})
     if request.method=='POST':
-        print(request.POST.dict())
+        data=request.POST.dict()
+        data.pop('csrfmiddlewaretoken')
+        print(data)
+        grade=utils.judge(data)
+        print(grade)
         return HttpResponse(request.POST.dict())
 
 

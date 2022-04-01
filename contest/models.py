@@ -1,6 +1,5 @@
-import datetime
 from django.db import models
-
+from user import models as user
 SINGLE_CHOICE='SC'
 MULTIPLE_CHOICES='MC'
 JUDGMENT_QUESTION='JQ'
@@ -50,14 +49,23 @@ class Question(models.Model):
     answer=models.CharField(max_length=5)
     created_time=models.DateTimeField(verbose_name='创建时间',auto_now_add=True,null=True)
 
-class contest(models.Model):
+class Contest(models.Model):
     '''竞赛'''
     id=models.AutoField(primary_key=True)
     name=models.CharField(verbose_name='名称',max_length=11,default=' ')
     type=models.CharField(verbose_name='类型',choices=CONTEST_TYPE,max_length=2,default=RANDOM)
-    config=models.CharField(verbose_name='配置',max_length=50,blank=True)
+    config=models.TextField(verbose_name='配置',max_length=50,blank=True)
     status=models.CharField(verbose_name='状态',choices=CONTEST_STATUS,max_length=2,default=WAITED)
     starttime=models.DateField(verbose_name='开始时间',blank=True,null=True)
     duration=models.ImageField(verbose_name='时长',blank=True)
     created_time=models.DateTimeField(verbose_name='创建时间',auto_now_add=True,null=True)
+
+class Grade(models.Model):
+    '''成绩'''
+    id=models.AutoField(primary_key=True)
+    user=models.ManyToManyField(user.User)
+    contest=models.ManyToManyField(Contest)
+    score=models.FloatField(verbose_name='分数')
+    details=models.TextField(verbose_name='')
+
 

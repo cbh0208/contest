@@ -1,5 +1,7 @@
-import random,time
+import random,time,json
 import xlrd
+
+from contest import models
 
 def excel_handle(file):
     '''excel文件处理'''
@@ -31,3 +33,19 @@ def read_config(type,config):
         pass
     elif type=='SE':
         pass
+
+def judge(data):
+    grade=0
+    detail=[]
+    answers=models.Question.objects.all()
+
+    for i in data:
+        answer=answers.filter(id=1)[0].answer
+        item={'id':i,'my':data[i],'answer':answer,}
+        if(answer==data[i]):
+            item.update({'state':True})
+            grade+=1
+        else:
+            item.update({'state':False})
+        detail.append(item)
+    return {'score':grade,'detail':json.dumps(detail)}
