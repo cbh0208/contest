@@ -2,6 +2,11 @@ import random,time,json
 import xlrd
 
 from contest import models
+from user import models as userModels
+
+
+
+
 
 def excel_handle(file):
     '''excel文件处理'''

@@ -3,12 +3,10 @@ from user import models as user
 SINGLE_CHOICE='SC'
 MULTIPLE_CHOICES='MC'
 JUDGMENT_QUESTION='JQ'
-ESSAY_QUESTION='EQ'
 TYPE_CHOICE=[
     (SINGLE_CHOICE,'single choice'),
     (MULTIPLE_CHOICES,'multiple choice'),
-    (JUDGMENT_QUESTION,'judgement'),
-    (ESSAY_QUESTION,'essay')
+    (JUDGMENT_QUESTION,'judgement')
 ]
 
 RANDOM='RA'
@@ -33,6 +31,7 @@ class Question_bank(models.Model):
     '''题库'''
     id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=11)
+    description=models.TextField(verbose_name='描述',null=True)
     created_time=models.DateTimeField(verbose_name='创建时间',auto_now_add=True,null=True)
     updated_time=models.DateTimeField(verbose_name='修改时间',auto_now=True,null=True)
 
@@ -52,11 +51,12 @@ class Question(models.Model):
 class Contest(models.Model):
     '''竞赛'''
     id=models.AutoField(primary_key=True)
-    name=models.CharField(verbose_name='名称',max_length=11,default=' ')
-    type=models.CharField(verbose_name='类型',choices=CONTEST_TYPE,max_length=2,default=RANDOM)
+    name=models.CharField(verbose_name='名称',max_length=11)
+    description=models.TextField(verbose_name='描述',null=True)
     config=models.TextField(verbose_name='配置',max_length=50,blank=True)
     status=models.CharField(verbose_name='状态',choices=CONTEST_STATUS,max_length=2,default=WAITED)
-    starttime=models.DateField(verbose_name='开始时间',blank=True,null=True)
+    starttime=models.DateTimeField(verbose_name='开始时间',blank=True,null=True)
+    endtime=models.DateTimeField(verbose_name='结束时间',blank=True,null=True)
     duration=models.ImageField(verbose_name='时长',blank=True)
     created_time=models.DateTimeField(verbose_name='创建时间',auto_now_add=True,null=True)
 

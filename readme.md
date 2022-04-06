@@ -1,4 +1,1 @@
-#start
-```
-python manage.py runserver
-```
+竞赛系统-后端部分(django)
