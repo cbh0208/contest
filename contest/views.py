@@ -1,11 +1,13 @@
-from operator import mod
-import re
 from django.http import  HttpResponse, JsonResponse
 import jwt,json
+from datetime import datetime
 from . import models
 from . import utils
 from user import models as userModels
 
+# ###################################
+# ########       教师      ##########
+# ###################################
 def bank_list(request):
     '''获取题库列表'''
     if request.method=='GET':
@@ -182,9 +184,30 @@ def get_contest_list(request):
     else:
         return JsonResponse({"message":"Method Not Allowed"}) 
 
-
-def publish_contest(request):
-    pass
+def create_contest(request):
+    '''创建竞赛'''
+    if request.method=='POST':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='teacher'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.Administrators.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
+            data=json.loads(request.body.decode())
+            try:
+                models.Contest.objects.create(name=data['name'],description=data['description'],config=data['config'],starttime=datetime.strptime(data['time']['range'][0],'%Y-%m-%dT%H:%M:%S.000Z'),endtime=datetime.strptime(data['time']['range'][1],'%Y-%m-%dT%H:%M:%S.000Z'),duration=data['time']['duration'])
+            except:
+                return JsonResponse({"message":"创建失败"})
+            return JsonResponse({"message":"创建成功"})
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
 
 def end_contest(request):
     pass
@@ -192,17 +215,39 @@ def end_contest(request):
 def get_contest_grade(request,id):
     pass
 
-
-
 # ###################################
-# ########       竞赛      ##########
+# ########       学生      ##########
 # ###################################
-# def contest_manage(request):
-#     '''竞赛管理'''
-#     if request.method=='GET':
-#         data=models.contest.objects.all()
 
-#         return render(request,'contest/contest_manage.html',{'data':data})
+
+def get_contest_received(request):
+    '''获取可创建竞赛列表'''
+    if request.method=='GET':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='student'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.User.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
+            data=models.Contest.objects.all().filter(status='RE').values()
+            print(data)
+            return JsonResponse({"data":list(data)})
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
+
+def get_contest(request):
+    pass
+
+
+
+
 
 # def contest_create(request):
 #     '''竞赛创建'''

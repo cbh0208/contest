@@ -10,7 +10,10 @@ urlpatterns=[
     path('question_add_batch',views.question_add_batch),
 
     path('get_contest_list',views.get_contest_list),
-    path('publish_contest',views.publish_contest)
+    path('create_contest',views.create_contest),
+    path('end_contest',views.end_contest),
+
+    path('get_contest_received',views.get_contest_received)
 
 
 

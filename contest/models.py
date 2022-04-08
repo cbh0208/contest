@@ -54,10 +54,10 @@ class Contest(models.Model):
     name=models.CharField(verbose_name='名称',max_length=11)
     description=models.TextField(verbose_name='描述',null=True)
     config=models.TextField(verbose_name='配置',max_length=50,blank=True)
-    status=models.CharField(verbose_name='状态',choices=CONTEST_STATUS,max_length=2,default=WAITED)
+    status=models.CharField(verbose_name='状态',choices=CONTEST_STATUS,max_length=2,default=RELEASED)
     starttime=models.DateTimeField(verbose_name='开始时间',blank=True,null=True)
     endtime=models.DateTimeField(verbose_name='结束时间',blank=True,null=True)
-    duration=models.ImageField(verbose_name='时长',blank=True)
+    duration=models.CharField(verbose_name="时长",max_length=5,blank=True,null=True)
     created_time=models.DateTimeField(verbose_name='创建时间',auto_now_add=True,null=True)
 
 class Grade(models.Model):
