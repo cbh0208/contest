@@ -13,7 +13,11 @@ urlpatterns=[
     path('create_contest',views.create_contest),
     path('end_contest',views.end_contest),
 
-    path('get_contest_received',views.get_contest_received)
+    path('get_contest_received',views.get_contest_received),
+    path('get_contest/<int:id>/',views.get_contest),
+    path('contest_submit',views.contest_submit),
+    path('get_grade',views.get_grade),
+    path('get_detail/<int:id>/',views.get_detail)
 
 
 

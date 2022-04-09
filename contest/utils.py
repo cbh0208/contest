@@ -1,7 +1,9 @@
+from calendar import c
 import random,time,json
 import xlrd
 
 from contest import models
+import contest
 from user import models as userModels
 
 
@@ -30,27 +32,55 @@ def img_handel(file):
     except:
         return False
 
+def read_config(config):
+    print(config)
+    try:
+        question_bank=models.Question_bank.objects.get(id=config['bank'])
+        question=question_bank.question_set.all()
+    except:
+        raise KeyError()
+    List=[]
+    result={}
+    if config['type']=='random':
+        SC=random.sample(list(question.filter(type='SC')),config['SCNum'])
+        
+        for i in SC:
+            List.append({"id":i.id,"question_message":i.question_message,"type":"SC","option_A":i.option_A,"option_B":i.option_B,"option_C":i.option_C,"option_D":i.option_D,"score":config["SCScore"]})
+            result.update({i.id:{"my":'',"score":config["SCScore"]}})
+        return {'List':List,"result":result}
+    elif config['type']=='fixed':
+        for i in config['SClist']:
+            try:
+                obj=models.Question.objects.get(id=i)
+                List.append({"id":i,"question_message":obj.question_message,"type":"SC","option_A":obj.option_A,"option_B":obj.option_B,"option_C":obj.option_C,"option_D":obj.option_D,"score":config["SCScore"]})
+                result.update({i:{"my":'',"score":config["SCScore"]}})
+            except:
+                return 
+        return 8
+    elif config['type']=='select':
 
-def read_config(type,config):
-    if type=='RA':
-        pass
-    elif type=='FI':
-        pass
-    elif type=='SE':
-        pass
+        return 9
 
 def judge(data):
     grade=0
     detail=[]
     answers=models.Question.objects.all()
 
-    for i in data:
-        answer=answers.filter(id=1)[0].answer
-        item={'id':i,'my':data[i],'answer':answer,}
-        if(answer==data[i]):
+    for key,value in data.items():
+        answer=answers.filter(id=key)[0].answer
+        item={'id':key,'my':value['my'],'answer':answer,'score':value['score']}
+        if(answer==value['my']):
             item.update({'state':True})
-            grade+=1
+            grade+=value['score']
         else:
             item.update({'state':False})
         detail.append(item)
     return {'score':grade,'detail':json.dumps(detail)}
+
+
+def get_contest_name(grade):
+    contests=models.Contest.objects.all()
+    for i in grade:
+        c=contests.get(id=i['contest_id'])
+        i.update({'contest_name':c.name})
+    return grade

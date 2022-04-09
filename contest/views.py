@@ -242,13 +242,104 @@ def get_contest_received(request):
     else:
         return JsonResponse({"message":"Method Not Allowed"}) 
 
-def get_contest(request):
-    pass
+def get_contest(request,id):
+    '''获取竞赛题目'''
+    if request.method=='GET':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='student'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.User.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
+            try:
+                obj=models.Contest.objects.get(id=id)
+                data=utils.read_config(json.loads(obj.config))
+            except:
+                return JsonResponse({"message":"出现问题了"})
+            return JsonResponse({"data":data})
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
+
+def contest_submit(request):
+    if request.method=='POST':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='student'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.User.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
+            data=json.loads(request.body.decode())
+            
+            
+            try:
+                grade=utils.judge(data['result'])
+                print(grade)
+                models.Grade.objects.create(score=grade['score'],details=grade['detail'],user_id=auth['id'],contest_id=data['id'])
+            except:
+                return JsonResponse({"message":"出现问题了"})
+            return JsonResponse({"message":"提交成功"})
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
+
+def get_grade(request):
+    if request.method=='GET':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='student'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.User.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
+            try:
+                grade=obj.grade_set.values()
+                grade=utils.get_contest_name(list(grade))
+            except:
+                return JsonResponse({"message":"出现问题了"})
+            return JsonResponse({"data":grade})
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
 
 
 
 
+def get_detail(request,id):
+    if request.method=='GET':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='student'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.User.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
 
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
 # def contest_create(request):
 #     '''竞赛创建'''
 #     if request.method=="GET":

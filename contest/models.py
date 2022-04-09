@@ -63,8 +63,8 @@ class Contest(models.Model):
 class Grade(models.Model):
     '''成绩'''
     id=models.AutoField(primary_key=True)
-    user=models.ManyToManyField(user.User)
-    contest=models.ManyToManyField(Contest)
+    user=models.ForeignKey(user.User,on_delete=models.CASCADE,blank=True,null=True)
+    contest=models.ForeignKey(Contest,on_delete=models.CASCADE,blank=True,null=True)
     score=models.FloatField(verbose_name='分数')
     details=models.TextField(verbose_name='')
 
