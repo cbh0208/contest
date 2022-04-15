@@ -1,3 +1,4 @@
+from operator import mod
 from django.http import  HttpResponse, JsonResponse
 import jwt,json
 from datetime import datetime
@@ -102,6 +103,61 @@ def question_delete(request):
             except:
                 return JsonResponse({"message":"删除失败"})
             return JsonResponse({"message":"删除成功"})
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
+
+def get_current_question(request,id):
+    if request.method=='GET':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='teacher'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.Administrators.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
+            try:
+                data=models.Question.objects.filter(id=id).values()
+            except:
+                return JsonResponse({"message":"不存在"},status=404)
+            return JsonResponse({"data":list(data)})
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
+
+def question_edit(request):
+    if request.method=='POST':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='teacher'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.Administrators.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
+            data=json.loads(request.body.decode())
+            try:
+                obj=models.Question.objects.get(id=data['id'])
+                obj.question_message=data['form']['question_message']
+                obj.type=data['form']['type']
+                obj.option_A=data['form']['option_A']
+                obj.option_B=data['form']['option_B']
+                obj.option_C=data['form']['option_C']
+                obj.option_D=data['form']['option_D']
+                obj.answer=data['form']['answer']
+                obj.save()
+            except:
+                return JsonResponse({"message":"修改失败"})
+            return JsonResponse({"message":"修改成功"})
             # 正文
     else:
         return JsonResponse({"message":"Method Not Allowed"}) 
@@ -236,7 +292,6 @@ def get_contest_received(request):
                 return HttpResponse('Unauthorized', status=401)
             # 正文
             data=models.Contest.objects.all().filter(status='RE').values()
-            print(data)
             return JsonResponse({"data":list(data)})
             # 正文
     else:
@@ -319,9 +374,6 @@ def get_grade(request):
     else:
         return JsonResponse({"message":"Method Not Allowed"}) 
 
-
-
-
 def get_detail(request,id):
     if request.method=='GET':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -336,46 +388,11 @@ def get_detail(request,id):
             except:
                 return HttpResponse('Unauthorized', status=401)
             # 正文
-
+            try:
+                data=models.Grade.objects
+            except:
+                return JsonResponse()
+            return JsonResponse()
             # 正文
     else:
         return JsonResponse({"message":"Method Not Allowed"}) 
-# def contest_create(request):
-#     '''竞赛创建'''
-#     if request.method=="GET":
-#         data=models.Question_bank.objects.all()
-#         return render(request,'contest/contest_create.html',{'banks':data})
-#     if request.method=='POST':
-#         data=request.POST.dict()
-#         data.pop('csrfmiddlewaretoken')
-#         data.pop('bank_id')
-#         obj=models.contest(**data)
-#         u=reverse('contest_manage')
-#         try:
-#             obj.save()
-#         except:
-#             return HttpResponse('<script>alert("失败");location.href="'+u+'";</script>')
-#         return HttpResponse('<script>alert("成功");location.href="'+u+'";</script>')
-
-# def contest_config(request):
-#     '''竞赛配置'''
-#     pass
-
-# def contest(request,contest_id):
-#     '''竞赛'''
-#     if request.method=='GET':
-#         question_bank=models.Question_bank.objects.get(id=1)
-#         data=question_bank.question_set.all()
-#         return render(request,'contest/contest.html',{'data':data})
-#     if request.method=='POST':
-#         data=request.POST.dict()
-#         data.pop('csrfmiddlewaretoken')
-#         print(data)
-#         grade=utils.judge(data)
-#         print(grade)
-#         return HttpResponse(request.POST.dict())
-
-
-# ###################################
-# ########                 ##########
-# ###################################

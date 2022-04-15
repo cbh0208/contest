@@ -40,23 +40,25 @@ def read_config(config):
     except:
         raise KeyError()
     List=[]
-    result={}
+    result=[]
     if config['type']=='random':
         SC=random.sample(list(question.filter(type='SC')),config['SCNum'])
         
         for i in SC:
             List.append({"id":i.id,"question_message":i.question_message,"type":"SC","option_A":i.option_A,"option_B":i.option_B,"option_C":i.option_C,"option_D":i.option_D,"score":config["SCScore"]})
-            result.update({i.id:{"my":'',"score":config["SCScore"]}})
+            result.append({"id":i.id,"my":'',"score":config["SCScore"]})
         return {'List':List,"result":result}
+        
     elif config['type']=='fixed':
         for i in config['SClist']:
             try:
                 obj=models.Question.objects.get(id=i)
                 List.append({"id":i,"question_message":obj.question_message,"type":"SC","option_A":obj.option_A,"option_B":obj.option_B,"option_C":obj.option_C,"option_D":obj.option_D,"score":config["SCScore"]})
-                result.update({i:{"my":'',"score":config["SCScore"]}})
+                result.append({"id":i.id,"my":'',"score":config["SCScore"]})
             except:
                 return 
         return 8
+
     elif config['type']=='select':
 
         return 9

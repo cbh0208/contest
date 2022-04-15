@@ -5,9 +5,11 @@ urlpatterns=[
     path('bank/<int:id>/',views.bank),
     path('bank_add',views.bank_add),
 
+    path('get_current_question/<int:id>/',views.get_current_question),
     path('question_delete',views.question_delete),
     path('question_add',views.question_add),
     path('question_add_batch',views.question_add_batch),
+    path('question_edit',views.question_edit),
 
     path('get_contest_list',views.get_contest_list),
     path('create_contest',views.create_contest),
