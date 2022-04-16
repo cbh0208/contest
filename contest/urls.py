@@ -17,9 +17,14 @@ urlpatterns=[
 
     path('get_contest_received',views.get_contest_received),
     path('get_contest/<int:id>/',views.get_contest),
+    path('temporary_submit/<int:id>/',views.temporary_submit),
     path('contest_submit',views.contest_submit),
+
+
     path('get_grade',views.get_grade),
-    path('get_detail/<int:id>/',views.get_detail)
+    path('get_detail/<int:id>/',views.get_detail),
+
+    path('test',views.test)
 
 
 
