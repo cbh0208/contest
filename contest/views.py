@@ -337,7 +337,7 @@ def get_contest(request,id):
             try:
                 sheet=redis_conn.get(f"{auth['id']}_{id}")
             except:
-                return JsonResponse({"message":"出现问题了"}) 
+                return JsonResponse({"message":"出现问题了1"}) 
             if sheet:
                 data1=utils.read_sheet(json.loads(sheet.decode()))
                 if data1:
@@ -347,16 +347,17 @@ def get_contest(request,id):
             try:
                 obj2=models.Grade.objects.filter(contest_id=id).filter(user_id=auth['id'])
             except:
-                return JsonResponse({"message":"出现问题了"}) 
+                return JsonResponse({"message":"出现问题了2"}) 
             if obj2:
                 return JsonResponse({"message":"已经参加过了"})
 
             # 3.初始生成试卷,答题卡
             try:
                 obj3=models.Contest.objects.get(id=id)
+                print(89)
                 data3=utils.read_config(json.loads(obj3.config))
             except:
-                return JsonResponse({"message":"出现问题了"})
+                return JsonResponse({"message":"出现问题了3"})
             return JsonResponse({"data":data3})
             # 正文
     else:
@@ -460,10 +461,11 @@ def get_detail(request,id):
                 return HttpResponse('Unauthorized', status=401)
             # 正文
             try:
-                data=models.Grade.objects
+                obj=models.Grade.objects.get(id=id)
+                data=utils.read_detail(json.loads(obj.details))
             except:
-                return JsonResponse()
-            return JsonResponse()
+                return JsonResponse({"message":"出现问题了"})
+            return JsonResponse({'data':data,'grade':obj.score})
             # 正文
     else:
         return JsonResponse({"message":"Method Not Allowed"}) 

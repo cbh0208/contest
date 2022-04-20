@@ -22,7 +22,6 @@ def excel_handle(file):
         c.append(dict(zip(title,worksheet1.row_values(i))))
     return c
 
-
 # 读取竞赛config,生成试卷和答题卡
 def read_config(config):
     try:
@@ -37,7 +36,6 @@ def read_config(config):
     # 随机
     if config['type']=='random':
         SC=random.sample(list(question.filter(type='SC')),config['SCNum'])
-        
         for i in SC:
             paper.append({"id":i.id,"question_message":i.question_message,"type":"SC","option_A":i.option_A,"option_B":i.option_B,"option_C":i.option_C,"option_D":i.option_D,"score":config["SCScore"]})
             sheet.append({"id":i.id,"my":'',"score":config["SCScore"]})
@@ -45,14 +43,15 @@ def read_config(config):
 
     # 固定    
     elif config['type']=='fixed':
-        for i in config['SClist']:
+        for i in config['SCList']:
+            print(i)
             try:
-                obj=models.Question.objects.get(id=i)
+                obj=question.get(id=i)
                 paper.append({"id":i,"question_message":obj.question_message,"type":"SC","option_A":obj.option_A,"option_B":obj.option_B,"option_C":obj.option_C,"option_D":obj.option_D,"score":config["SCScore"]})
-                sheet.append({"id":i.id,"my":'',"score":config["SCScore"]})
+                sheet.append({"id":i,"my":'',"score":config["SCScore"]})
             except:
                 return 
-        return 8
+        return {'List':paper,"result":sheet}
     # 选择
     elif config['type']=='select':
 
@@ -70,9 +69,9 @@ def read_sheet(sheet):
             return
     return {'List':paper,"result":sheet}
 
-
 # 判题
 def judge(data):
+    '''判题'''
     grade=0
     detail=[]
     answers=models.Question.objects.all()
@@ -88,7 +87,7 @@ def judge(data):
         detail.append(item)
     return {'score':grade,'detail':json.dumps(detail)}
 
-
+# 获取竞赛名称
 def get_contest_name(grade):
     contests=models.Contest.objects.all()
     for i in grade:
@@ -96,7 +95,22 @@ def get_contest_name(grade):
         i.update({'contest_name':c.name})
     return grade
 
-
+# 读取成绩细节
+def read_detail(detail:list):
+    totalNumber=len(detail)
+    rightNumber=0
+    wrongList=[]
+    for i in detail:
+        if i['state']==True:
+            rightNumber+=1
+        else:
+            try:
+                obj=models.Question.objects.get(id=i['id'])
+                wrongList.append({'id':i['id'],'my':i['my'],"question_message":obj.question_message,"type":obj.type,"option_A":obj.option_A,"option_B":obj.option_B,"option_C":obj.option_C,"option_D":obj.option_D,'answer':obj.answer,'score':i['score']})
+            except:
+                return
+            
+    return {'totalNumber':totalNumber,'rightNumber':rightNumber,'wrongList':wrongList}
 
 
 
