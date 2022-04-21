@@ -72,16 +72,17 @@ def read_sheet(sheet):
 # 判题
 def judge(data):
     '''判题'''
+    print(data)
     grade=0
     detail=[]
     answers=models.Question.objects.all()
 
-    for key,value in data.items():
-        answer=answers.filter(id=key)[0].answer
-        item={'id':key,'my':value['my'],'answer':answer,'score':value['score']}
-        if(answer==value['my']):
+    for i in data:
+        answer=answers.filter(id=i['id'])[0].answer
+        item={'id':i['id'],'my':i['my'],'answer':answer,'score':i['score']}
+        if answer==i['my']:
             item.update({'state':True})
-            grade+=value['score']
+            grade+=i['score']
         else:
             item.update({'state':False})
         detail.append(item)
@@ -93,6 +94,15 @@ def get_contest_name(grade):
     for i in grade:
         c=contests.get(id=i['contest_id'])
         i.update({'contest_name':c.name})
+    return grade
+
+def get_user_name(grade):
+    for i in grade:
+        try:
+            obj=userModels.User.objects.get(id=i['user_id'])
+            i.update({'username':obj.username})
+        except:
+            return
     return grade
 
 # 读取成绩细节

@@ -18,11 +18,9 @@ CONTEST_TYPE=[
     (SELECT,'select')
 ]
 
-WAITED='IN'
 RELEASED='RE'
 CLOSED='CL'
 CONTEST_STATUS=[
-    (WAITED,'waited'),
     (RELEASED,'released'),
     (CLOSED,'closed')
 ]

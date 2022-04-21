@@ -250,8 +250,10 @@ def get_contest_list(request):
             except:
                 return HttpResponse('Unauthorized', status=401)
             # 正文
-            data=models.Contest.objects.values()
-            return JsonResponse({"data":list(data)})
+            data=models.Contest.objects.all()
+            RE=data.filter(status='RE').values()
+            CL=data.filter(status='CL').values()
+            return JsonResponse({"RE":list(RE),"CL":list(CL)})
             # 正文
     else:
         return JsonResponse({"message":"Method Not Allowed"}) 
@@ -283,12 +285,56 @@ def create_contest(request):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 结束竞赛
-def end_contest(request):
-    pass
+def end_contest(request,id):
+    if request.method=='POST':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='teacher'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.Administrators.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
+            try:
+                obj=models.Contest.objects.get(id=id)
+                obj.status='CL'
+                obj.save()
+            except:
+                return JsonResponse({"message":"出现问题了"})
+            return JsonResponse({"message":"创建成功"})
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 获取竞赛成绩
 def get_contest_grade(request,id):
-    pass
+    if request.method=='GET':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='teacher'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.Administrators.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
+            try:
+                obj=models.Contest.objects.get(id=id)
+                grade=obj.grade_set.values('user_id','score')
+                grade=utils.get_user_name(grade)
+            except:
+                return JsonResponse({"message":"出现问题了"})
+            return JsonResponse({"data":list(grade)})
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
 
 # ###################################
 # ########       学生      ##########
@@ -310,7 +356,7 @@ def get_contest_received(request):
             except:
                 return HttpResponse('Unauthorized', status=401)
             # 正文
-            data=models.Contest.objects.all().filter(status='RE').values()
+            data=models.Contest.objects.filter(status='RE').values()
             return JsonResponse({"data":list(data)})
             # 正文
     else:
@@ -407,12 +453,13 @@ def contest_submit(request):
             # 正文
             data=json.loads(request.body.decode())
             
-            
             try:
                 grade=utils.judge(data['result'])
+                print(grade,45454)
                 models.Grade.objects.create(score=grade['score'],details=grade['detail'],user_id=auth['id'],contest_id=data['id'])
             except:
                 return JsonResponse({"message":"出现问题了"})
+            redis_conn.set(f"{auth['id']}_{data['id']}",'')
             return JsonResponse({"message":"提交成功"})
             # 正文
     else:
