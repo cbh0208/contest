@@ -1,6 +1,6 @@
 from django.http import  HttpResponse, JsonResponse
 import jwt,json
-from datetime import datetime
+from datetime import datetime,timedelta
 
 from django_redis import get_redis_connection
 from . import models
@@ -9,9 +9,9 @@ from user import models as userModels
 
 redis_conn = get_redis_connection()
 
-# ###################################
-# ########       教师      ##########
-# ###################################
+# ###########################################################################################################################################
+# ########       教师      ##################################################################################################################
+# ###########################################################################################################################################
 
 # 获取题库列表
 def bank_list(request):
@@ -336,9 +336,9 @@ def get_contest_grade(request,id):
     else:
         return JsonResponse({"message":"Method Not Allowed"}) 
 
-# ###################################
-# ########       学生      ##########
-# ###################################
+# ###########################################################################################################################################
+# ########       学生      ##################################################################################################################
+# ###########################################################################################################################################
 
 # 获取可参加竞赛列表
 def get_contest_received(request):
@@ -379,6 +379,10 @@ def get_contest(request,id):
                 return HttpResponse('Unauthorized', status=401)
             # 正文
 
+
+
+
+
             # 1.查看redis,是否正在进行
             try:
                 sheet=redis_conn.get(f"{auth['id']}_{id}")
@@ -387,7 +391,7 @@ def get_contest(request,id):
             if sheet:
                 data1=utils.read_sheet(json.loads(sheet.decode()))
                 if data1:
-                     return JsonResponse({"data":data1})
+                    return JsonResponse({"data":data1})
 
             # # 2.查看mysql,是否已完成
             try:
@@ -397,11 +401,11 @@ def get_contest(request,id):
             if obj2:
                 return JsonResponse({"message":"已经参加过了"})
 
-            # 3.初始生成试卷,答题卡
+            # 3.初始生成试卷,答题卡,时间
             try:
                 obj3=models.Contest.objects.get(id=id)
-                print(89)
-                data3=utils.read_config(json.loads(obj3.config))
+                print(obj3.duration)
+                data3=utils.read_config(json.loads(obj3.config),obj3.duration)
             except:
                 return JsonResponse({"message":"出现问题了3"})
             return JsonResponse({"data":data3})
@@ -425,9 +429,8 @@ def temporary_submit(request,id):
             except:
                 return HttpResponse('Unauthorized', status=401)
             # 正文
-            data=json.loads(request.body.decode())
             try:
-                redis_conn.set(f"{auth['id']}_{id}",json.dumps(data['result']))   
+                redis_conn.set(f"{auth['id']}_{id}",request.body.decode())   
             except:
                 return JsonResponse({"message":"出现问题了"})
             return JsonResponse({"message":"暂存成功"})
@@ -517,12 +520,12 @@ def get_detail(request,id):
     else:
         return JsonResponse({"message":"Method Not Allowed"}) 
 
-
-############################################################
+############################################################################################################################################################
+############################################################################################################################################################
 def test(request):
+    print(7878)
     if request.method=='POST':
-        data=json.loads(request.body.decode())
-        a=redis_conn.get('yy')
-        d=json.loads(a.decode())
-        print(d['username'],type(d))
-        return JsonResponse({'a':895})
+        time=utils.formatTime(datetime.now()+timedelta(minutes=30))
+        return JsonResponse({"a":time})
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
