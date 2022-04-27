@@ -1,8 +1,8 @@
-from django.http import  HttpResponse, JsonResponse
-import jwt,json
-from datetime import datetime,timedelta
-
+from django.http import  HttpResponse, JsonResponse,HttpRequest
 from django_redis import get_redis_connection
+from datetime import datetime,timedelta
+import jwt,json
+
 from . import models
 from . import utils
 from user import models as userModels
@@ -14,7 +14,7 @@ redis_conn = get_redis_connection()
 # ###########################################################################################################################################
 
 # 获取题库列表
-def bank_list(request):
+def bank_list(request:HttpRequest):
     '''获取题库列表'''
     if request.method=='GET':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -36,7 +36,7 @@ def bank_list(request):
         return JsonResponse({"message":"Method Not Allowed"})   
 
 # 获取题库信息(题目列表)
-def bank(request,id):
+def bank(request:HttpRequest,id):
     '''获取题库信息(题目列表)'''
     if request.method=='GET':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -62,7 +62,7 @@ def bank(request,id):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 创建题库
-def bank_add(request):
+def bank_add(request:HttpRequest):
     '''创建题库'''
     if request.method=='POST':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -89,7 +89,7 @@ def bank_add(request):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 删除题目
-def question_delete(request):
+def question_delete(request:HttpRequest):
     '''删除题目'''
     if request.method=='POST':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -116,7 +116,7 @@ def question_delete(request):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 获取单个题目(用于编辑)
-def get_current_question(request,id):
+def get_current_question(request:HttpRequest,id):
     '''获取单个题目(用于编辑)'''
     if request.method=='GET':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -141,7 +141,7 @@ def get_current_question(request,id):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 题目编辑
-def question_edit(request):
+def question_edit(request:HttpRequest):
     '''题目编辑'''
     if request.method=='POST':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -175,7 +175,7 @@ def question_edit(request):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 添加题目
-def question_add(request):
+def question_add(request:HttpRequest):
     '''添加题目'''
     if request.method=='POST':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -203,7 +203,7 @@ def question_add(request):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 提交题目(批量)
-def question_add_batch(request):
+def question_add_batch(request:HttpRequest):
     '''提交题目(批量)'''
     if request.method=='POST':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -235,7 +235,7 @@ def question_add_batch(request):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 获取竞赛列表
-def get_contest_list(request):
+def get_contest_list(request:HttpRequest):
     '''竞赛列表'''
     if request.method=='GET':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -259,7 +259,7 @@ def get_contest_list(request):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 创建竞赛
-def create_contest(request):
+def create_contest(request:HttpRequest):
     '''创建竞赛'''
     if request.method=='POST':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -285,7 +285,7 @@ def create_contest(request):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 结束竞赛
-def end_contest(request,id):
+def end_contest(request:HttpRequest,id):
     if request.method=='POST':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
         if not token:
@@ -311,7 +311,7 @@ def end_contest(request,id):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 获取竞赛成绩
-def get_contest_grade(request,id):
+def get_contest_grade(request:HttpRequest,id):
     if request.method=='GET':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
         if not token:
@@ -341,7 +341,7 @@ def get_contest_grade(request,id):
 # ###########################################################################################################################################
 
 # 获取可参加竞赛列表
-def get_contest_received(request):
+def get_contest_received(request:HttpRequest):
     '''获取可参加竞赛列表'''
     if request.method=='GET':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -363,7 +363,7 @@ def get_contest_received(request):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 获取竞赛题目
-def get_contest(request,id):
+def get_contest(request:HttpRequest,id):
     '''获取竞赛题目'''
     if request.method=='GET':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -414,7 +414,7 @@ def get_contest(request,id):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 竞赛暂存
-def temporary_submit(request,id):
+def temporary_submit(request:HttpRequest,id):
     '''竞赛暂存'''
     if request.method=='POST':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -439,7 +439,7 @@ def temporary_submit(request,id):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 竞赛提交
-def contest_submit(request):
+def contest_submit(request:HttpRequest):
     '''竞赛提交'''
     if request.method=='POST':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -469,7 +469,7 @@ def contest_submit(request):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 获取成绩(列表)
-def get_grade(request):
+def get_grade(request:HttpRequest):
     '''获取成绩'''
     if request.method=='GET':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -495,7 +495,7 @@ def get_grade(request):
         return JsonResponse({"message":"Method Not Allowed"}) 
 
 # 获取成绩(具体)
-def get_detail(request,id):
+def get_detail(request:HttpRequest,id):
     '''获取成绩(具体)'''
     if request.method=='GET':
         token=str(request.META.get('HTTP_AUTHORIZATION',None))
@@ -522,7 +522,7 @@ def get_detail(request,id):
 
 ############################################################################################################################################################
 ############################################################################################################################################################
-def test(request):
+def test(request:HttpRequest):
     print(7878)
     if request.method=='POST':
         time=utils.formatTime(datetime.now()+timedelta(minutes=30))
