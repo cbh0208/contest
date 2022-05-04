@@ -392,6 +392,7 @@ def get_contest(request:HttpRequest,id):
             if sheet:
                 data1=utils.read_sheet(json.loads(sheet.decode()))
                 if data1:
+                    print('read redis')
                     return JsonResponse({"data":data1})
 
             # # 2.查看mysql,是否已完成
@@ -405,10 +406,10 @@ def get_contest(request:HttpRequest,id):
             # 3.初始生成试卷,答题卡,时间
             try:
                 obj3=models.Contest.objects.get(id=id)
-                print(obj3.duration)
                 data3=utils.read_config(json.loads(obj3.config),obj3.duration)
             except:
                 return JsonResponse({"message":"出现问题了3"})
+            print('read mysql')
             return JsonResponse({"data":data3})
             # 正文
     else:
@@ -431,7 +432,8 @@ def temporary_submit(request:HttpRequest,id):
                 return HttpResponse('Unauthorized', status=401)
             # 正文
             try:
-                redis_conn.set(f"{auth['id']}_{id}",request.body.decode())   
+                redis_conn.set(f"{auth['id']}_{id}",request.body.decode())  
+                print(f"{auth['id']}_{id}") 
             except:
                 return JsonResponse({"message":"出现问题了"})
             return JsonResponse({"message":"暂存成功"})

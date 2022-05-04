@@ -6,7 +6,6 @@ from unittest import result
 import xlrd
 
 from contest import models
-import contest
 from user import models as userModels
 
 
@@ -35,19 +34,18 @@ def read_config(config,duration):
     paper=[]   # 试卷
     sheet=[]   # 答题卡
     endTime=formatTime(datetime.now()+timedelta(minutes=int(duration)))
+    print(endTime,int(duration))
     # 随机(完成多选)
     if config['type']=='random':
         SC=random.sample(list(question.filter(type='SC')),config['SCNum'])
         for i in SC:
             paper.append({"id":i.id,"question_message":i.question_message,"type":"SC","option_A":i.option_A,"option_B":i.option_B,"option_C":i.option_C,"option_D":i.option_D,"score":config["SCScore"]})
             sheet.append({"id":i.id,"my":'',"score":config["SCScore"]})
-        print(777777777)
         return {'List':paper,"result":sheet,"endTime":endTime}
 
     # 固定(完成多选)    
     elif config['type']=='fixed':
         for i in config['SCList']:
-            print(i)
             try:
                 obj=question.get(id=i)
                 paper.append({"id":i,"question_message":obj.question_message,"type":"SC","option_A":obj.option_A,"option_B":obj.option_B,"option_C":obj.option_C,"option_D":obj.option_D,"score":config["SCScore"]})
@@ -63,16 +61,15 @@ def read_config(config,duration):
 
 # 读取答题卡,生成试卷
 def read_sheet(sheet):
-    print(sheet)
     paper=[]
     result=sheet['result']
-    print(result)
     for i in result:
         try:
             obj=models.Question.objects.get(id=i['id'])
             paper.append({"id":i['id'],"question_message":obj.question_message,"type":obj.type,"option_A":obj.option_A,"option_B":obj.option_B,"option_C":obj.option_C,"option_D":obj.option_D,"score":i["score"]})
         except:
             return
+    print(sheet['endTime'])
     return {'List':paper,"result":result,"endTime":sheet['endTime']}
 
 # 判题
@@ -120,12 +117,11 @@ def read_detail(detail:list):
     for i in detail:
         if i['state']==True:
             rightNumber+=1
-        else:
-            try:
-                obj=models.Question.objects.get(id=i['id'])
-                wrongList.append({'id':i['id'],'my':i['my'],"question_message":obj.question_message,"type":obj.type,"option_A":obj.option_A,"option_B":obj.option_B,"option_C":obj.option_C,"option_D":obj.option_D,'answer':obj.answer,'score':i['score']})
-            except:
-                return
+        try:
+            obj=models.Question.objects.get(id=i['id'])
+            wrongList.append({'id':i['id'],'my':i['my'],"question_message":obj.question_message,"type":obj.type,"option_A":obj.option_A,"option_B":obj.option_B,"option_C":obj.option_C,"option_D":obj.option_D,'answer':obj.answer,'score':i['score']})
+        except:
+            return
             
     return {'totalNumber':totalNumber,'rightNumber':rightNumber,'wrongList':wrongList}
 
