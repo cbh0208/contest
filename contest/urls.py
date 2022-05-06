@@ -21,6 +21,7 @@ urlpatterns=[
     path('contest_submit',views.contest_submit),
 
     path('get_contest_grade/<int:id>/',views.get_contest_grade),
+    path('get_contest_analysis/<int:id>/',views.get_contest_analysis),
 
     path('get_grade',views.get_grade),
     path('get_detail/<int:id>/',views.get_detail),

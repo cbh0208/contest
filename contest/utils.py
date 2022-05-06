@@ -1,10 +1,6 @@
-from calendar import c
-from cmath import log
 from datetime import datetime,timedelta
 import random,time,json
-from unittest import result
 import xlrd
-
 from contest import models
 from user import models as userModels
 
@@ -26,7 +22,7 @@ def excel_handle(file):
 # 读取竞赛config,生成试卷和答题卡
 def read_config(config,duration):
     try:
-        question_bank=models.Question_bank.objects.get(id=config['bank'])
+        question_bank:models.Question_bank=models.Question_bank.objects.get(id=config['bank'])
         question=question_bank.question_set.all()
     except:
         raise KeyError()
@@ -65,7 +61,7 @@ def read_sheet(sheet):
     result=sheet['result']
     for i in result:
         try:
-            obj=models.Question.objects.get(id=i['id'])
+            obj:models.Question=models.Question.objects.get(id=i['id'])
             paper.append({"id":i['id'],"question_message":obj.question_message,"type":obj.type,"option_A":obj.option_A,"option_B":obj.option_B,"option_C":obj.option_C,"option_D":obj.option_D,"score":i["score"]})
         except:
             return
@@ -95,7 +91,7 @@ def judge(data):
 def get_contest_name(grade):
     contests=models.Contest.objects.all()
     for i in grade:
-        c=contests.get(id=i['contest_id'])
+        c:models.Contest=contests.get(id=i['contest_id'])
         i.update({'contest_name':c.name})
     return grade
 
@@ -103,13 +99,13 @@ def get_contest_name(grade):
 def get_user_name(grade):
     for i in grade:
         try:
-            obj=userModels.User.objects.get(id=i['user_id'])
+            obj:userModels.User=userModels.User.objects.get(id=i['user_id'])
             i.update({'username':obj.username})
         except:
             return
     return grade
 
-# 读取成绩细节
+# 读取成绩细节(学生成绩展示)
 def read_detail(detail:list):
     totalNumber=len(detail)
     rightNumber=0
@@ -118,12 +114,49 @@ def read_detail(detail:list):
         if i['state']==True:
             rightNumber+=1
         try:
-            obj=models.Question.objects.get(id=i['id'])
+            obj:models.Question=models.Question.objects.get(id=i['id'])
             wrongList.append({'id':i['id'],'my':i['my'],"question_message":obj.question_message,"type":obj.type,"option_A":obj.option_A,"option_B":obj.option_B,"option_C":obj.option_C,"option_D":obj.option_D,'answer':obj.answer,'score':i['score']})
         except:
             return
-            
     return {'totalNumber':totalNumber,'rightNumber':rightNumber,'wrongList':wrongList}
+
+def details_analysis(data):
+    nameArr=[]
+    valueArr=[]
+    details={}
+    for i in data:
+        list=json.loads(i['details'])
+        for j in list:
+            if j['id'] not in details:
+                details[j['id']]={
+                    'answer':j['answer'],
+                    'num':1,
+                    'list':[]
+                }
+            else:
+                details[j['id']]['num']+=1
+            if not j['state']:
+                details[j['id']]['list'].append(j['my'])
+    details = dict((k, v) for k, v in details.items() if  v['list']  )
+    for k,v in details.items():
+        v['rate']=format(v['num']/len(v['list'])*100,'.2f')
+    details=dict(sorted(details.items(),key=lambda a:a[1]['rate'],reverse=True))
+    for k,v in details.items():
+        nameArr.append(k)
+        valueArr.append(v['rate'])
+    for k,v in details.items():
+        try:
+            obj:models.Question=models.Question.objects.get(id=k)
+            v["question_message"]=obj.question_message
+            v["option_A"]=obj.option_A
+            v["option_B"]=obj.option_D
+            v["option_C"]=obj.option_C
+            v["option_D"]=obj.option_D
+        except:
+            return
+    return {"nameArr":nameArr,"valueArr":valueArr,"details":details}
+
+
 
 # 时间格式化
 def formatTime(time:datetime):

@@ -337,6 +337,34 @@ def get_contest_grade(request:HttpRequest,id):
     else:
         return JsonResponse({"message":"Method Not Allowed"}) 
 
+# 获取竞赛分析
+def get_contest_analysis(request:HttpRequest,id):
+    if request.method=='GET':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='teacher'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.Administrators.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
+            try:
+                obj=models.Contest.objects.get(id=id)
+                details=obj.grade_set.values('details')
+                analysis=utils.details_analysis(details)
+
+            except:
+                return JsonResponse({"message":"出现问题了"})
+            return JsonResponse({"data":analysis})
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
+
+
 # ###########################################################################################################################################
 # ########       学生      ##################################################################################################################
 # ###########################################################################################################################################
