@@ -120,6 +120,7 @@ def read_detail(detail:list):
             return
     return {'totalNumber':totalNumber,'rightNumber':rightNumber,'wrongList':wrongList}
 
+# 错题分析(老师成绩展示)
 def details_analysis(data):
     nameArr=[]
     valueArr=[]
@@ -137,13 +138,37 @@ def details_analysis(data):
                 details[j['id']]['num']+=1
             if not j['state']:
                 details[j['id']]['list'].append(j['my'])
+
+    # 过滤没错的题
     details = dict((k, v) for k, v in details.items() if  v['list']  )
+
+    # 计算错误率
     for k,v in details.items():
         v['rate']=format(v['num']/len(v['list'])*100,'.2f')
+
+    # 按错误率排序
     details=dict(sorted(details.items(),key=lambda a:a[1]['rate'],reverse=True))
+
+    # 错题统计
+    for k,v in details.items():
+        l=v['list']
+        ul=''
+        hash={}
+        for i in l:
+            if i in hash:
+                hash[i]+=1
+            else:
+                hash[i]=1
+        for kh,vh in hash.items():
+            ul+=f'<ul>{kh}:{vh}次 </ul>'
+        v['list']=ul
+    
+
+    # 生成nameArr,valueArr
     for k,v in details.items():
         nameArr.append(k)
         valueArr.append(v['rate'])
+    # 添加题目信息    
     for k,v in details.items():
         try:
             obj:models.Question=models.Question.objects.get(id=k)
@@ -154,6 +179,7 @@ def details_analysis(data):
             v["option_D"]=obj.option_D
         except:
             return
+
     return {"nameArr":nameArr,"valueArr":valueArr,"details":details}
 
 
