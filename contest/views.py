@@ -56,7 +56,7 @@ def bank(request:HttpRequest,id):
                 question_bank=models.Question_bank.objects.get(id=id)
                 data=question_bank.question_set.values()
             except:
-                print('error')
+                return JsonResponse({"message":"出现问题了"})
             return JsonResponse({"data":list(data)})
             # 正文
     else:
@@ -89,6 +89,31 @@ def bank_add(request:HttpRequest):
     else:
         return JsonResponse({"message":"Method Not Allowed"}) 
 
+# 删除题库
+def bank_delete(request:HttpRequest,id):
+    if request.method=='POST':
+        token=str(request.META.get('HTTP_AUTHORIZATION',None))
+        if not token:
+            return HttpResponse('Unauthorized', status=401)
+        else:
+            auth=jwt.decode(token.encode(), "secret", algorithms=["HS256"])
+            if(auth['type']!='teacher'):
+                return HttpResponse('Unauthorized', status=401)
+            try:
+                obj=userModels.Administrators.objects.get(id=auth['id'])
+            except:
+                return HttpResponse('Unauthorized', status=401)
+            # 正文
+            try:
+                question_bank=models.Question_bank.objects.get(id=id)
+                question_bank.delete()
+            except:
+                return JsonResponse({"message":"出现问题了"})
+            return JsonResponse({"message":"删除成功"})
+            # 正文
+    else:
+        return JsonResponse({"message":"Method Not Allowed"}) 
+
 # 删除题目
 def question_delete(request:HttpRequest):
     '''删除题目'''
@@ -110,7 +135,7 @@ def question_delete(request:HttpRequest):
                 obj=models.Question.objects.get(id=id)
                 obj.delete()
             except:
-                return JsonResponse({"message":"删除失败"})
+                return JsonResponse({"message":"出现问题了"})
             return JsonResponse({"message":"删除成功"})
             # 正文
     else:

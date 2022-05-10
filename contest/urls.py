@@ -4,6 +4,7 @@ urlpatterns=[
     path('bank_list',views.bank_list),
     path('bank/<int:id>/',views.bank),
     path('bank_add',views.bank_add),
+    path('bank_delete/<int:id>/',views.bank_delete),
 
     path('get_current_question/<int:id>/',views.get_current_question),
     path('question_delete',views.question_delete),
