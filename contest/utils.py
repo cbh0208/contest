@@ -139,14 +139,14 @@ def details_analysis(data):
             if not j['state']:
                 details[j['id']]['list'].append(j['my'])
 
-    # 过滤没错的题
+    # 过滤没错的题(即list为空的题)
     details = dict((k, v) for k, v in details.items() if  v['list']  )
 
-    # 计算错误率
+    # 计算错误率(保留2位小数)
     for k,v in details.items():
         v['rate']=format(v['num']/len(v['list'])*100,'.2f')
 
-    # 按错误率排序
+    # 按错误率排序(从大到小)
     details=dict(sorted(details.items(),key=lambda a:a[1]['rate'],reverse=True))
 
     # 错题统计
@@ -159,15 +159,10 @@ def details_analysis(data):
                 hash[i]+=1
             else:
                 hash[i]=1
-        for kh,vh in hash.items():
-            ul+=f'<ul>{kh}:{vh}次 </ul>'
-        v['list']=ul
+        v['hash']=hash
     
 
-    # 生成nameArr,valueArr
-    for k,v in details.items():
-        nameArr.append(k)
-        valueArr.append(v['rate'])
+
     # 添加题目信息    
     for k,v in details.items():
         try:
@@ -180,7 +175,7 @@ def details_analysis(data):
         except:
             return
 
-    return {"nameArr":nameArr,"valueArr":valueArr,"details":details}
+    return details
 
 
 
